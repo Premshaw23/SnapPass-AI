@@ -1,9 +1,9 @@
-import 'dotenv/config';
 import app from './src/app.js';
+import config from './app.config.js';
 
-const PORT = process.env.PORT || 3000;
+const PORT = config.port;
 
 app.listen(PORT, () => {
   console.log(`✅  SnapPass AI backend running on http://localhost:${PORT}`);
-  console.log(`🤖  AI Service URL: ${process.env.AI_SERVICE_URL}`);
+  console.log(`🤖  AI Service URL: ${config.aiServiceUrl}`);
 });
