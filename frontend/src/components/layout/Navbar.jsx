@@ -37,7 +37,15 @@ function Navbar({darkMode, toggleTheme}) {
               to={path}
               end={path === '/'}
               className={({ isActive }) =>
-                `navbar__link${isActive ? ' navbar__link--active' : ''}`
+                `navbar__link ${
+                  darkMode ? 'navbar__link-dark' : 'navbar__link-light'
+                } ${
+                  isActive
+                    ? darkMode
+                      ? ' navbar__mobile-link--active-dark'
+                      : ' navbar__mobile-link--active-light'
+                    : ''
+                }`
               }
             >
               {label}
@@ -75,7 +83,17 @@ function Navbar({darkMode, toggleTheme}) {
               to={path}
               end={path === '/'}
               className={({ isActive }) =>
-                `navbar__mobile-link${isActive ? ' navbar__mobile-link--active' : ''}`
+                `navbar__mobile-link ${
+                  darkMode
+                    ? 'navbar__mobile-link-dark'
+                    : 'navbar__mobile-link-light'
+                } ${
+                  isActive
+                    ? darkMode
+                      ? ' navbar__mobile-link--active-dark'
+                      : ' navbar__mobile-link--active-light'
+                    : ''
+                }`
               }
               onClick={() => setMenuOpen(false)}
             >
