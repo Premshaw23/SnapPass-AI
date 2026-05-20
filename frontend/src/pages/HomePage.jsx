@@ -130,7 +130,7 @@ function HomePage({darkMode, toggleTheme}) {
   };
 
   return (
-    <div className={`home-page ${darkMode? 'home-page-dark': 'home-page-light' }`}>
+    <div>
       <HeroSection />
 
       {/* ── Showcase Section ── */}
