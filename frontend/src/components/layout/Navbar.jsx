@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import {Sun, Moon} from 'lucide-react'
 import './Navbar.css';
@@ -11,16 +11,32 @@ function Navbar({darkMode, toggleTheme}) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navLinks = [
-    { path: '/',             label: 'Home' },
-    { path: '/upload',       label: 'Upload' },
-    { path: '/editor',       label: 'Editor' },
+    { path: '/', label: 'Home' },
+    { path: '/upload', label: 'Upload' },
+    { path: '/editor', label: 'Editor' },
     { path: '/print-preview', label: 'Print' },
-    { path: '/admin',        label: 'Admin' },
+    { path: '/admin', label: 'Admin' },
   ];
+
+  // Close menu on resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <header className={`navbar ${darkMode?  'navbar--dark': 'navbar--light'}`} role="banner">
       <div className="navbar__inner">
+
         {/* Logo */}
         <Link to="/" className="navbar__brand" aria-label="SnapPass AI Home">
           <span className="navbar__logo-icon" aria-hidden="true">📷</span>
@@ -29,8 +45,8 @@ function Navbar({darkMode, toggleTheme}) {
           </span>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="navbar__links" aria-label="Main navigation">
+        {/* Desktop Navigation */}
+        <nav className="navbar__links">
           {navLinks.map(({ path, label }) => (
             <NavLink
               key={path}
@@ -69,8 +85,9 @@ function Navbar({darkMode, toggleTheme}) {
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen(o => !o)}
           >
-            <span className={`hamburger-icon${menuOpen ? ' open' : ''}`} />
+            <span className={`hamburger-icon ${menuOpen ? 'open' : ''}`}></span>
           </button>
+
         </div>
       </div>
 

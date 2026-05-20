@@ -1,13 +1,16 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './HomePage.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import "./HomePage.css";
+import { motion } from "framer-motion";
 
-import {
-  Upload,
-  Sparkles,
-  Settings2,
-  Download,
-} from "lucide-react";
+import { Upload, Sparkles, Settings2, Download } from "lucide-react";
+import HeroSection from "../components/HomePage/HeroSection";
+import AIShowcaseSection from "../components/HomePage/AIShowcaseSection";
+import StepsSection from "../components/HomePage/StepsSection";
+import FeaturesSection from "../components/HomePage/FeaturesSection";
+import CTABanner from "../components/HomePage/CTABanner";
+
+import { fadeUpVariant } from "../animations/variants.js";
 
 /**
  * HomePage — landing page with hero section and feature highlights.
@@ -15,46 +18,62 @@ import {
 function HomePage({darkMode, toggleTheme}) {
   const features = [
     {
-      icon: 'bg-remove',
-      title: 'AI Background Removal',
-      desc: 'Remove any background instantly with rembg — no manual selection needed.',
-      image: '/f-1.png',
-      tag: 'AI Powered',
+      icon: "bg-remove",
+      title: "AI Background Removal",
+      desc: "Remove any background instantly with rembg — no manual selection needed.",
+      image: "/f-1.png",
+      tag: "AI Powered",
     },
     {
-      icon: 'face-center',
-      title: 'Auto Face Centering',
-      desc: 'OpenCV detects and centers your face to meet passport photo guidelines.',
-      image: '/f-2.png',
-      tag: 'OpenCV',
+      icon: "face-center",
+      title: "Auto Face Centering",
+      desc: "OpenCV detects and centers your face to meet passport photo guidelines.",
+      image: "/f-2.png",
+      tag: "OpenCV",
     },
     {
-      icon: 'sizes',
-      title: 'Standard Size Presets',
-      desc: 'India, USA, UK, Schengen and more — pick a preset and we handle the DPI.',
-      image: '/f-3.png',
-      tag: 'Multiple Formats',
+      icon: "sizes",
+      title: "Standard Size Presets",
+      desc: "India, USA, UK, Schengen and more — pick a preset and we handle the DPI.",
+      image: "/f-3.png",
+      tag: "Multiple Formats",
     },
     {
-      icon: 'print',
-      title: 'A4 Print Layout',
-      desc: 'Generate a printable A4 sheet with multiple photos — save on printing costs.',
-      image: '/f-4.png',
-      tag: 'Print Ready',
+      icon: "print",
+      title: "A4 Print Layout",
+      desc: "Generate a printable A4 sheet with multiple photos — save on printing costs.",
+      image: "/f-4.png",
+      tag: "Print Ready",
     },
   ];
 
   const steps = [
-    { label: 'Upload your photo', icon: <Upload size={22} />, subtitle: 'Choose a photo from your device' },
-    { label: 'AI processes & centers', icon: <Sparkles size={22} />, subtitle: 'Advanced AI optimization for your photo' },
-    { label: 'Choose size & quantity', icon: <Settings2 size={22} />, subtitle: 'Select your required photo format and copies' },
-    { label: 'Download & print', icon: <Download size={22} />, subtitle: 'Get a high-quality print-ready photo instantly' },
+    {
+      label: "Upload your photo",
+      icon: <Upload size={22} />,
+      subtitle: "Choose a photo from your device",
+    },
+    {
+      label: "AI processes & centers",
+      icon: <Sparkles size={22} />,
+      subtitle: "Advanced AI optimization for your photo",
+    },
+    {
+      label: "Choose size & quantity",
+      icon: <Settings2 size={22} />,
+      subtitle: "Select your required photo format and copies",
+    },
+    {
+      label: "Download & print",
+      icon: <Download size={22} />,
+      subtitle: "Get a high-quality print-ready photo instantly",
+    },
   ];
 
   const chips = [
-    { icon: 'spark', label: 'Background Removed' },
-    { icon: 'target', label: 'Auto Centered' },
-    { icon: 'printer', label: 'Print Ready' },
+    { icon: "spark", label: "Background Removed" },
+    { icon: "target", label: "Auto Centered" },
+    { icon: "printer", label: "Print Ready" },
   ];
 
   const iconMap = {
@@ -78,14 +97,14 @@ function HomePage({darkMode, toggleTheme}) {
         <path d="M8.5 13.5h7" />
       </svg>
     ),
-    'bg-remove': (
+    "bg-remove": (
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <rect x="3" y="3" width="18" height="18" rx="4" />
         <path d="M7 14l3-3 3 3 4-5" />
         <path d="M8 8h3" />
       </svg>
     ),
-    'face-center': (
+    "face-center": (
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <rect x="4" y="4" width="16" height="16" rx="4" />
         <circle cx="12" cy="10" r="2" />
@@ -112,173 +131,19 @@ function HomePage({darkMode, toggleTheme}) {
 
   return (
     <div className={`home-page ${darkMode? 'home-page-dark': 'home-page-light' }`}>
-      {/* ── Hero ── */}
-      <section className="hero" aria-labelledby="hero-title">
-        <div className="hero__inner">
-          <span className={`badge ${darkMode?"badge-blue-dark": "badge-blue"}`}>Open Source · Free to Use</span>
-          <h1 id="hero-title" className={`hero__title ${darkMode? 'hero__title-dark': 'hero__title-light'}`}>
-            Passport Photos,<br />
-            <span className={`hero__title-highlight ${darkMode? 'hero__title-highlight-dark': 'hero__title-highlight-light'}`}>Powered by AI</span>
-          </h1>
-          <p className={`hero__subtitle ${darkMode? 'hero__subtitle-dark': 'hero__subtitle-light'}`} >
-            Upload once. Get a perfectly centred, background-removed, print-ready
-            passport photo sheet in seconds.
-          </p>
-          <div className="hero__actions">
-            <Link to="/upload" className={`btn hero__btn-primary ${darkMode?  "btn-primary-dark": 'btn-primary' }`}>
-              Upload Your Photo
-            </Link>
-          </div>
-        </div>
-        <div className="hero__visual" aria-hidden="true">
-          <div className={`hero__photo-mock ${darkMode? "hero__photo-mock-dark": "hero__photo-mock-light" }`}>
-            <div className={`hero__photo-frame ${darkMode? "hero__photo-frame-dark": "hero__photo-frame-light"}`}/>
-            <div className={`hero__photo-frame ${darkMode? "hero__photo-frame-dark": "hero__photo-frame-light"}`}/>
-            <div className={`hero__photo-frame ${darkMode? "hero__photo-frame-dark": "hero__photo-frame-light"}`}/>
-            <div className={`hero__photo-frame ${darkMode? "hero__photo-frame-dark": "hero__photo-frame-light"}`}/>
-          
-          </div>
-          <span className={`hero__ai-badge ${darkMode? "hero__ai-badge-dark": "hero__ai-badge-light"}`}> AI Processed</span>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* ── Showcase Section ── */}
-      <section
-        className="ai-showcase"
-        aria-labelledby="ai-showcase-title"
-      >
-
-        {/* left  text */}
-        <div className="ai-showcase__content">
-
-          <span className={`badge ${darkMode?"badge-blue-dark": "badge-blue"}`}>
-            AI Powered Workflow
-          </span>
-
-          <h2
-            id="ai-showcase-title"
-            className={`section-title ${darkMode? "section-title-dark": "section-title-light"}`}
-          >
-            From Simple Upload
-            <br />
-            to Print-Ready Sheet
-          </h2>
-
-          <p className="section-subtitle">
-            Upload a portrait photo and let AI automatically remove the background,
-            align your face and generate a professional passport photo sheet.
-          </p>
-
-          {/* feature */}
-          <div className="ai-showcase__chips">
-            {chips.map(({ icon, label }) => (
-              <div key={label} className="ai-chip">
-                <span className="ai-chip__icon" aria-hidden="true">
-                  {iconMap[icon]}
-                </span>
-                {label}
-              </div>
-            ))}
-          </div>
-
-        </div>
-
-        {/* images */}
-        <div className="ai-showcase__visual">
-
-          {/* original */}
-          <div className="showcase-photo-card">
-            <img
-              src="/before.png"
-              alt="Uploaded portrait"
-              className="showcase-photo-card__image"
-            />
-          </div>
-
-          {/* print sheet */}
-          <div className="showcase-sheet-card">
-
-            <img
-              src="/after.png"
-              alt="Printable passport sheet"
-              className="showcase-sheet-card__image"
-            />
-
-            <div className="showcase-sheet-card__badge">
-              Print Ready
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
+      <AIShowcaseSection chips={chips} iconMap={iconMap} />
 
       {/* ── How it Works ── */}
-      <section className="steps-section" aria-labelledby="steps-title">
-        <h2 id="steps-title" className="section-title text-center">How It Works</h2>
-        <p className="section-subtitle text-center">Four simple steps to a print-ready sheet</p>
-        <div className="steps-grid">
-          {steps.map(({ label, icon, subtitle }) => (
-            <div key={label} className="step-card">
-              <span className="step-card__icon">{icon}</span>
-              <div className="step-card__content">
-                <p className="step-card__label">{label}</p>
-                <p className="step-card__subtitle">{subtitle}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <StepsSection steps={steps} />
 
       {/* ── Features ── */}
-      <section className="features-section" aria-labelledby="features-title">
-        <h2 id="features-title" className="section-title text-center">Features</h2>
-        <p className="section-subtitle text-center">Everything you need right out of the box</p>
-        <div className="features-grid">
-          {features.map(({ icon, title, desc, image, tag }) => (
-            <div key={title} className="feature-card card">
-
-              <div className="feature-card__preview">
-
-                <img
-                  src={image}
-                  alt={title}
-                  className="feature-card__image"
-                  loading="lazy"
-                />
-
-                <span className="feature-card__tag">
-                  {tag}
-                </span>
-
-              </div>
-
-              <span className="feature-card__icon" aria-hidden="true">
-                {iconMap[icon]}
-              </span>
-
-              <h3 className="feature-card__title">
-                {title}
-              </h3>
-
-              <p className="feature-card__desc">
-                {desc}
-              </p>
-
-            </div>
-          ))}
-        </div>
-      </section>
+      <FeaturesSection features={features} iconMap={iconMap} />
 
       {/* ── CTA Banner ── */}
-      <section className="cta-banner" aria-label="Call to action">
-        <div className="cta-banner__inner">
-          <h2 className="cta-banner__title">Ready to generate your passport photo?</h2>
-          <p className="cta-banner__subtitle">No account required. Completely free and open-source.</p>
-          <Link to="/upload" className="btn btn-primary">Get Started →</Link>
-        </div>
-      </section>
+      <CTABanner />
     </div>
   );
 }
