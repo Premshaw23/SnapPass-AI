@@ -1,45 +1,65 @@
-# SnapPass AI — Python AI Service
+#  Python AI Service
 
-The Python AI microservice for SnapPass AI. Built with Flask, it handles all image processing tasks — background removal, face centering, DPI optimisation, and A4 sheet generation.
-
-Runs on `http://localhost:8000` and is called by the Express backend.
+Flask microservice for SnapPass AI — handles all image processing.
+Runs on **`http://localhost:8000`**
 
 ---
 
-## Prerequisites
+##  Prerequisites
 
 - Python 3.9 or higher *(3.9 preferred)*
 
 ---
 
-## Local Setup
-
-### 1. Navigate to the service folder
+##  Quick Start
 
 ```bash
 cd python-ai-service
-```
 
-### 2.Create and activate a virtual environment
-
-```bash
-# Create
+# Create and activate virtual environment
 python3.9 -m venv venv
 
-# Activate — Mac/Linux
+# Mac/Linux
 source venv/bin/activate
 
-# Activate — Windows
+# Windows
 venv\Scripts\activate
-```
 
-### 3.Install dependencies
-
-```bash
+# Install dependencies
 pip install -r requirements.txt
+
+# Create .env file
+cp .env.example .env
+
+# Start the service
+python main.py
 ```
 
-### 4.Create your `.env` file
+---
+
+## Folder Structure
+
+```
+python-ai-service/
+├── app/
+│   ├── routes/
+│   │   └── process_routes.py   # All Flask endpoint definitions
+│   └── services/
+│       ├── bg_remove.py        # Background removal using rembg 
+│       ├── face_center.py      # Face detection & centering 
+│       ├── dpi_optimizer.py    # Resize to passport dimensions 
+│       └── sheet_generator.py  # A4 sheet layout 
+├── main.py                     # Flask entry point
+├── config.py                   # Reads .env variables
+├── requirements.txt            # Python dependencies
+└── .env                        # Local environment variables (not committed)
+```
+
+---
+
+## Environment Variables
+
+Create a `.env` file in `python-ai-service/`:
 
 ```env
 PORT=8000
@@ -48,42 +68,31 @@ UPLOAD_DIR=uploads
 MAX_FILE_MB=10
 ```
 
-### 5.Start the service
-
-```bash
-python main.py
-```
-
-Service will be running at `http://localhost:8000`
-
 ---
 
-## API Endpoints
+## API Routes
 
 ### `GET /health`
 
-Check if the service is running.
+Check if the service is up.
 
-**Response:**
 ```json
-{
-  "status": "ok",
-  "service": "python-ai-service"
-}
+{ "status": "ok", "service": "python-ai-service" }
 ```
 
 ---
 
 ### `POST /remove-bg`
 
-Removes the background from a portrait photo and replaces it with a solid colour.
+Full passport photo pipeline — background removal → face centering → DPI resize.
 
 **Request — `multipart/form-data`:**
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `image` | File |  Yes | Portrait photo (JPEG, PNG, WEBP) |
+| `image` | File | Yes | Portrait photo (JPEG, PNG, WEBP) |
 | `background_colour` | Text |  No | Colour name or hex. Default: `white` |
+| `preset` | Text |  No | Country preset. Default: `35x45` |
 
 **Supported `background_colour` values:**
 
@@ -96,8 +105,7 @@ Removes the background from a portrait photo and replaces it with a solid colour
 | `#ffffff` | Any custom hex colour code |
 
 **Success Response — `200 OK`:**
-
-Returns the processed image directly as `image/png` bytes.
+Returns processed `image/png` bytes — 300 DPI, passport dimensions, face centred.
 
 **Error Responses:**
 
@@ -109,25 +117,58 @@ Returns the processed image directly as `image/png` bytes.
 
 ---
 
-## 🔌 Backend Integration Guide
+### `POST /generate-sheet`
 
-This section explains how the Express backend (`image.controller.js`) should call this service.
+Generate a print-ready A4 passport photo sheet.
 
-### How it works
+```json
+// Request Body
+{
+    "photo_path"  : "path/to/photo.jpg",
+    "preset_id"   : "35x45",
+    "quantity"    : 8,
+    "bg_color"    : [255, 255, 255],
+    "draw_guides" : true
+}
+
+// Success → returns JPEG image (200)
+// Error   → { "error": "reason here" }
+```
+
+---
+
+## Available Presets
+
+| ID | Country | Size |
+|----|---------|------|
+| `35x45` | India / UK | 35 × 45 mm |
+| `51x51` | USA Visa | 51 × 51 mm |
+| `33x48` | Schengen | 33 × 48 mm |
+| `40x60` | China | 40 × 60 mm |
+| `2x2in` | US Passport | 2 × 2 in |
+
+---
+
+## Backend Integration Guide
+
+### Complete pipeline flow
 
 ```
 React Frontend
-     ↓  POST /api/process
-Express Backend (port 5000)
-     ↓  POST /remove-bg
+     ↓  POST /api/process  (filename, background_colour, preset)
+Express Backend — image.controller.js (port 5000)
+     ↓  POST /remove-bg  (multipart/form-data)
 Python AI Service (port 8000)
-     ↓  returns PNG bytes
+     ↓  Step 1: bg_remove.py     — background removal
+     ↓  Step 2: face_center.py   — face detect + centre
+     ↓  Step 3: dpi_optimizer.py — resize to 300 DPI
+     ↓  returns processed PNG bytes
 Express Backend
-     ↓  returns image to frontend
-React Frontend
+     ↓  streams PNG back to frontend
+React Frontend — displays passport photo
 ```
 
-### Express → Python service call
+### Express controller code
 
 In `backend/src/controllers/image.controller.js`:
 
@@ -139,30 +180,27 @@ const fs       = require("fs");
 const form = new FormData();
 form.append("image", fs.createReadStream(filePath));
 form.append("background_colour", backgroundColour); // e.g. "white"
+form.append("preset", preset);                      // e.g. "35x45"
 
 const aiResponse = await axios.post(
   `${config.aiServiceUrl}/remove-bg`,
   form,
   {
     headers: { ...form.getHeaders() },
-    responseType: "arraybuffer", // important — response is PNG bytes
+    responseType: "arraybuffer",
   }
 );
 
-// Send PNG back to frontend
 res.set("Content-Type", "image/png");
 res.send(Buffer.from(aiResponse.data));
 ```
 
 ### Environment variable
 
-Make sure this is set in `backend/.env`:
-
+In `backend/.env`:
 ```env
 AI_SERVICE_URL=http://localhost:8000
 ```
-
-This maps to `config.aiServiceUrl` in `backend/src/config/app.config.js`.
 
 ---
 
@@ -170,35 +208,13 @@ This maps to `config.aiServiceUrl` in `backend/src/config/app.config.js`.
 
 ### Using Postman
 
-1.Method: `POST`
-2.URL: `http://localhost:8000/remove-bg`
-3.Body → `form-data`
-4.Add field: `image` → type `File` → select your photo
-5.Add field: `background_colour` → type `Text` → `white`
-6.Click **Send**
-
-You will receive the background-removed PNG directly in the response.
-
----
-
-## Folder Structure
-
-```
-python-ai-service/
-├── main.py                        # Flask app entry point — runs on port 8000
-├── config.py                      # Reads .env variables
-├── requirements.txt               # Python dependencies
-├── .env                           # Local environment variables (not committed)
-├── .gitignore                     # venv, uploads, .env excluded
-└── app/
-    ├── routes/
-    │   └── process_routes.py      # All Flask endpoint definitions
-    └── services/
-        ├── bg_remove.py           # Background removal using rembg
-        ├── face_center.py         # Face detection using OpenCV
-        ├── dpi_optimizer.py       # DPI resize using Pillow
-        └── sheet_generator.py     # A4 sheet tiling using Pillow
-```
+1. Method: `POST`
+2. URL: `http://localhost:8000/remove-bg`
+3. Body → `form-data`
+4. Add field: `image` → type `File` → select your photo
+5. Add field: `background_colour` → type `Text` → `white`
+6. Add field: `preset` → type `Text` → `35x45`
+7. Click **Send**
 
 ---
 
@@ -206,36 +222,26 @@ python-ai-service/
 
 | Package | Purpose |
 |---------|---------|
-| `flask` | Web framework — serves the API endpoints |
-| `flask-cors` | Allows cross-origin requests from the React frontend |
-| `rembg` | AI-powered background removal using U2Net model |
-| `Pillow` | Image compositing, resizing, and DPI handling |
-| `opencv-python-headless` | Face detection using Haar cascade |
-| `python-dotenv` | Loads `.env` variables into `config.py` |
+| `flask` | Web framework |
+| `flask-cors` | Cross-origin requests |
+| `rembg` | AI background removal |
+| `Pillow` | Image processing |
+| `opencv-python-headless` | Face detection |
+| `numpy` | Array operations |
+| `python-dotenv` | Loads `.env` variables |
+| `gunicorn` | Production server |
 
 ---
 
 ## Common Errors
 
 **`rembg` first run is slow:**
-The first request downloads the U2Net model (~170MB). Subsequent requests are fast.
+First request downloads the U2Net model (~170MB). Subsequent requests are fast.
 
 **`ECONNREFUSED` in Express:**
-The Python service is not running. Start it with `python main.py` before running the backend.
+Python service is not running. Start it with `python main.py` first.
 
 **`venv` not activating on Windows:**
-Run this in PowerShell first:
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
-
----
-
-## Contributing
-
-Want to implement the remaining services? Check the main [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines.
-
-**Remaining high priority tasks:**
-- `face_center.py` — face detection and auto-centering using OpenCV
-- `dpi_optimizer.py` — resize to passport dimensions at 300 DPI
-- `sheet_generator.py` — tile photos onto A4 print sheet

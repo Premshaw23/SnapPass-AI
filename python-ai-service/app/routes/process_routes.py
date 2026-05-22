@@ -3,6 +3,8 @@ import uuid
 from flask import Blueprint, request, jsonify, send_file
 import config
 from app.services.bg_remove import remove_background
+from app.services.face_center import center_face
+from app.services.dpi_optimizer import optimise_dpi
 process_bp= Blueprint("process", __name__)
 
 
@@ -24,9 +26,13 @@ def remove_bg():
 
     bg_colour = request.form.get("background_colour", "white")
 
+    preset = request.form.get("preset", "35x45")
+
     try:
         image_bytes= file.read()
         result_bytes= remove_background(image_bytes, bg_colour)
+        centered = center_face(result_bytes)
+        final_image = optimise_dpi(centered, preset)
 
         filename= f"{uuid.uuid4().hex}.png"
         save_path= os.path.join(config.UPLOAD_DIR, filename)
