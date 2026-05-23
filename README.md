@@ -33,6 +33,35 @@ No expensive studio. No complicated software. Just upload, click, and print.
 
 ---
 
+## 📸 Website Preview
+
+<div align="center">
+
+### 🏠 Home Page
+<img src="./frontend/public/screenshots/home.png" width="90%" alt="Home Page"/>
+
+<br/><br/>
+
+### 📤 Upload Interface
+<img src="./frontend/public/screenshots/upload.png" width="90%" alt="Upload Interface"/>
+
+<br/><br/>
+
+### ✂️ Editor / Passport Processing
+<img src="./frontend/public/screenshots/editor.png" width="90%" alt="Editor Page"/>
+
+<br/><br/>
+
+### 📄 Print Preview
+<img src="./frontend/public/screenshots/print.png" width="90%" alt="Print Preview"/>
+
+<br/><br/>
+
+</div>
+
+
+---
+
 ## 🧭 Project Status
 
 > ⚠️ **This project is in active early development.** The frontend scaffold is complete and functional. The backend and Python AI service stubs are ready for contributors to build on.
