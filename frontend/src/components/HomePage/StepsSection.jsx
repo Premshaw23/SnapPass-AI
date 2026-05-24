@@ -15,7 +15,7 @@ const StepsSection = ({ darkMode, toggleTheme, steps }) => {
         viewport={{ once: true }}
         custom={0.1}
       >
-        <h2 id="steps-title" className={`section-title ${darkMode? 'section-title-dark': ''}`}>
+        <h2 id="steps-title" className={`section-title ${darkMode? 'section-title-dark': 'section-title-light'}`}>
           How It Works
         </h2>
         <p className={`section-subtitle ${  darkMode ? 'section-subtitle-dark' : ''}`}>

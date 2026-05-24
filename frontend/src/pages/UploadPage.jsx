@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import UploadBox from '../components/UploadBox';
-import LoadingSpinner from '../components/LoadingSpinner';
-import usePhotoUpload from '../hooks/usePhotoUpload';
-import './UploadPage.css';
-import { motion } from 'framer-motion';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import UploadBox from "../components/UploadBox";
+import LoadingSpinner from "../components/LoadingSpinner";
+import usePhotoUpload from "../hooks/usePhotoUpload";
+import "./UploadPage.css";
+import { motion } from "framer-motion";
+
+import { tips, iconMap } from "../data/UploadPageData";
+import { fadeUpVariant } from "../animations/variants.js";
 
 /**
  * UploadPage — Step 1 of the flow.
@@ -12,7 +15,7 @@ import { motion } from 'framer-motion';
  */
 function UploadPage({darkMode, toggleTheme}) {
   const navigate = useNavigate();
-  const { uploadFile, uploadedFile, isUploading, error, } = usePhotoUpload();
+  const { uploadFile, uploadedFile, isUploading, error } = usePhotoUpload();
 
   const tips = [
     { type: 'ok', text: 'Plain background preferred' },
@@ -41,27 +44,16 @@ function UploadPage({darkMode, toggleTheme}) {
       </svg>
     ),
   };
-
-  const handleFileSelect = async (file) => {await uploadFile(file);};
   useEffect(() => {
     if (!uploadedFile) return;
-    navigate('/editor', {
+    navigate("/editor", {
       state: {
         localUrl: uploadedFile.localUrl,
         filename: uploadedFile.filename,
-        fileSize: uploadedFile.fileSize,
+        fileSize: uploadedFile.size,
       },
     });
   }, [uploadedFile, navigate]);
-
-  const fadeUpVariant = {
-    hidden: { opacity: 0, y: 30 },
-    visible: (delay = 0) => ({
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut", delay }
-    })
-  };
 
   return (
     <div className= {`upload-toggle ${darkMode?"upload-toggle-dark": ""}`}> 
@@ -95,7 +87,7 @@ function UploadPage({darkMode, toggleTheme}) {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            custom={0.2 + (idx * 0.1)} // Staggers each tip by 100ms
+            custom={0.2 + idx * 0.1} // Staggers each tip by 100ms
           >
             <span className="upload-tip__icon" aria-hidden="true">
               {iconMap[type]}
@@ -114,13 +106,16 @@ function UploadPage({darkMode, toggleTheme}) {
         custom={0.5} // Loads after the tips
       >
         {isUploading ? (
-          <LoadingSpinner message="Uploading & preparing your photo…" size="lg" />
+          <LoadingSpinner
+            message="Uploading & preparing your photo…"
+            size="lg"
+          />
         ) : (
-          <UploadBox onFileSelect={handleFileSelect} />
+          <UploadBox onFileSelect={uploadFile} />
         )}
       </motion.div>
 
-      <motion.p
+      <motion.p 
         className={`upload-page__privacy ${darkMode? "upload-page__privacy-dark": ""}`}
         variants={fadeUpVariant}
         initial="hidden"
@@ -131,7 +126,8 @@ function UploadPage({darkMode, toggleTheme}) {
         <span className="upload-page__privacy-icon" aria-hidden="true">
           {iconMap.lock}
         </span>
-        Your photo is processed locally and never stored without your permission.
+        Your photo is processed locally and never stored without your
+        permission.
       </motion.p>
     </div>
     </div>

@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import "./HomePage.css";
 import { motion } from "framer-motion";
 
@@ -9,8 +8,9 @@ import AIShowcaseSection from "../components/HomePage/AIShowcaseSection";
 import StepsSection from "../components/HomePage/StepsSection";
 import FeaturesSection from "../components/HomePage/FeaturesSection";
 import CTABanner from "../components/HomePage/CTABanner";
+import BackToTop from "../components/HomePage/BackToTop";
 
-import { fadeUpVariant } from "../animations/variants.js";
+import { features, steps, chips, iconMap } from "../data/HomePageData";
 
 /**
  * HomePage — landing page with hero section and feature highlights.
@@ -122,7 +122,7 @@ function HomePage({darkMode, toggleTheme}) {
     print: (
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path d="M6 9V4h12v5" />
-        <rect x="4" y="10" width="16" height="7" rx="2" />
+        <rect x="4z" y="10" width="16" height="7" rx="2" />
         <path d="M7 17v3h10v-3" />
         <path d="M9 13h6" />
       </svg>
@@ -144,6 +144,7 @@ function HomePage({darkMode, toggleTheme}) {
 
       {/* ── CTA Banner ── */}
       <CTABanner />
+      <BackToTop />
     </div>
   );
 }

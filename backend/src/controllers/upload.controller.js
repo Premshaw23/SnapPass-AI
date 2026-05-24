@@ -5,46 +5,75 @@
  */
 
 import { v4 as uuidv4 } from "uuid";
-import { config } from "../config/config.js";
+import fs from "fs/promises";
+import { uploadImage } from "../service/cloudinary.service.js";
 import Upload from "../models/upload.model.js";
+import { config } from "../config/config.js";
 
 /**
  * POST /api/upload
  * Accepts a multipart image upload and responds with the stored file path.
  */
 export const uploadPhoto = async (req, res, next) => {
+  let localPath;
+  let isCloudinaryUsed = false;
   try {
     // multer middleware has already saved the file at this point
     if (!req.file) {
       return res.status(400).json({ success: false, message: "No file uploaded." });
     }
 
+    localPath = req.file.path;
     const fileId = uuidv4();
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    
+    let fileUrl;
+    let publicId = null;
 
-    await Upload.create({
-      fileId,
-      filename: req.file.filename,
-      originalName: req.file.originalname,
-      fileUrl,
-      mimetype: req.file.mimetype,
-      size: req.file.size,
-    });
+    const { cloudName, apiKey, apiSecret } = config.cloudinary;
+    if (cloudName && apiKey && apiSecret) {
+      const cloudinaryResult = await uploadImage(localPath);
+      fileUrl = cloudinaryResult.secure_url;
+      publicId = cloudinaryResult.public_id;
+      isCloudinaryUsed = true;
+    } else {
+      // Fallback to local URL
+      fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    }
+
+    if (req.user?.id) {
+      await Upload.create({
+        user: req.user.id,
+        fileId,
+        originalName: req.file.originalname,
+        fileUrl,
+        mimeType: req.file.mimetype,
+        sizeBytes: req.file.size,
+      });
+    }
 
     res.status(201).json({
       success: true,
-      message: "Photo uploaded successfully.",
+      message: "Photo uploaded successfully" + (isCloudinaryUsed ? "." : " (locally)."),
       data: {
         fileId,
         filename: req.file.filename,
         originalName: req.file.originalname,
         fileUrl,
+        publicId,
         mimetype: req.file.mimetype,
         size: req.file.size,
       },
     });
   } catch (error) {
     next(error);
+  } finally {
+    if (localPath && isCloudinaryUsed) {
+      try {
+        await fs.unlink(localPath);
+      } catch (_error) {
+        // Best-effort cleanup, ignore failures.
+      }
+    }
   }
 };
 

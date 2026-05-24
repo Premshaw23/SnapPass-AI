@@ -61,17 +61,20 @@ function Footer({darkMode, toggleTheme}) {
               </Link>
             </div>
 
-            <div className="footer__column">
+            
               <h4 className={`footer__heading ${darkMode ? 'footer__heading-dark' : ''}`}>Company</h4>
 
-              <a href="#" className={`footer__item ${darkMode ? 'footer__item-dark' : ''}`}>
+              <a href="/privacy" className={`footer__heading ${darkMode ? 'footer__heading-dark' : ''}`}>
                 Privacy Policy
+            
               </a>
 
-              <a href="#" className={`footer__item ${darkMode ? 'footer__item-dark' : ''}`}>
+              <a href="/terms" className={`footer__heading ${darkMode ? 'footer__heading-dark' : ''}`}>
+          
                 Terms & Conditions
+            
               </a>
-            </div>
+            
 
             <div className="footer__column">
               <h4 className={`footer__heading ${darkMode ? 'footer__heading-dark' : ''}`}>Contact</h4>

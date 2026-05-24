@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import {Sun, Moon} from 'lucide-react'
 import './Navbar.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * Navbar — fixed top navigation bar.
@@ -9,6 +10,16 @@ import './Navbar.css';
  */
 function Navbar({darkMode, toggleTheme}) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navLinks = [
     { path: '/', label: 'Home' },
@@ -18,25 +29,9 @@ function Navbar({darkMode, toggleTheme}) {
     { path: '/admin', label: 'Admin' },
   ];
 
-  // Close menu on resize
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768) {
-        setMenuOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
   return (
     <header className={`navbar ${darkMode?  'navbar--dark': 'navbar--light'}`} role="banner">
       <div className="navbar__inner">
-
         {/* Logo */}
         <Link to="/" className="navbar__brand" aria-label="SnapPass AI Home">
           <span className="navbar__logo-icon" aria-hidden="true">📷</span>
@@ -45,8 +40,7 @@ function Navbar({darkMode, toggleTheme}) {
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="navbar__links">
+        <nav className="navbar__links" aria-label="Main navigation">
           {navLinks.map(({ path, label }) => (
             <NavLink
               key={path}
@@ -85,9 +79,8 @@ function Navbar({darkMode, toggleTheme}) {
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen(o => !o)}
           >
-            <span className={`hamburger-icon ${menuOpen ? 'open' : ''}`}></span>
+            <span className={`hamburger-icon${menuOpen ? ' open' : ''}`} />
           </button>
-
         </div>
       </div>
 
