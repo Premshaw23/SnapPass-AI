@@ -48,7 +48,7 @@ function QuantityInput({ darkMode, toggleTheme, value = 6, onChange, min = 1, ma
           −
         </button>
         <input
-          className="qty-input__field"
+          className={`qty-input__field ${darkMode ? 'qty-input__field-dark' : ''}`}
           type="number"
           value={value}
           min={min}

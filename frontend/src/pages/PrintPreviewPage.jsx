@@ -116,11 +116,13 @@ function PrintPreviewPage({darkMode, toggleTheme}) {
         >
           <div>
             <p className="print-info-label">Selected Preset</p>
-            <p className="print-info-value">{state.sizePreset || '35x45 mm'}</p>
+            <p className={`print-info-value ${darkMode ? "print-info-value-dark" : ""}`}>
+              {state.sizePreset || '35x45 mm'}
+            </p>
           </div>
           <div>
             <p className="print-info-label">Background</p>
-            <p className="print-info-value" style={{ textTransform: 'capitalize' }}>
+            <p className={`print-info-value ${darkMode ? "print-info-value-dark" : "print-info-value-light"}`} style={{ textTransform: 'capitalize' }}>
               {state.background || 'White'}
             </p>
           </div>

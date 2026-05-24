@@ -74,6 +74,9 @@
   font-weight: 600;
   color: var(--color-text);
 }
+.print-info-value-dark{
+  color: white;
+}
 
 .print-page__back-btn {
   display: inline-flex;
