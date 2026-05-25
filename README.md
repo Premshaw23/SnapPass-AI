@@ -162,9 +162,9 @@ npm install
 npm run dev
 ```
 
-Backend runs at [http://localhost:5000](http://localhost:5000).
+Backend runs at [http://localhost:3000](http://localhost:3000).
 
-Health check: `GET http://localhost:5000/health`
+Health check: `GET http://localhost:3000/health`
 
 ---
 
@@ -242,13 +242,13 @@ Home
 ### Frontend (`frontend/.env`)
 
 ```env
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:3000/api
 ```
 
 ### Backend (`backend/.env`)
 
 ```env
-PORT=5000
+PORT=3000
 NODE_ENV=development
 AI_SERVICE_URL=http://localhost:8000
 UPLOAD_DIR=uploads
