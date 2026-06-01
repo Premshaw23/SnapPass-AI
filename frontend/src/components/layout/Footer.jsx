@@ -201,23 +201,23 @@ function Footer({ darkMode }) {
                 {t.company}
               </h4>
 
-              <a
-                href="/privacy"
+              <Link
+                to="/privacy"
                 className={`footer__item ${
                   darkMode ? 'footer__item-dark' : ''
                 }`}
               >
                 {t.privacyPolicy}
-              </a>
+              </Link>
 
-              <a
-                href="/terms"
+              <Link
+                to="/terms"
                 className={`footer__item ${
                   darkMode ? 'footer__item-dark' : ''
                 }`}
               >
                 {t.termsConditions}
-              </a>
+              </Link>
             </div>
 
             {/* CONTACT */}

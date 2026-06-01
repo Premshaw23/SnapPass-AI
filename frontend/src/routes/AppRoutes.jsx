@@ -29,9 +29,9 @@ function AppRoutes({darkMode, toggleTheme}) {
           <Route path="/editor"       element={<EditorPage darkMode={darkMode} toggleTheme={toggleTheme}/>} />
           <Route path="/print-preview" element={<PrintPreviewPage darkMode={darkMode} toggleTheme={toggleTheme}/>} />
           <Route path="/admin"        element={<AdminDashboard darkMode={darkMode} toggleTheme={toggleTheme}/>} />
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/studio" element={<PhotoStudio />} />
+          <Route path="/terms" element={<TermsPage darkMode={darkMode} toggleTheme={toggleTheme}/>} />
+          <Route path="/privacy" element={<PrivacyPage darkMode={darkMode} toggleTheme={toggleTheme}/>} />
+          <Route path="/studio" element={<PhotoStudio darkMode={darkMode} toggleTheme={toggleTheme}/>} />
           {/* Fallback — redirect unknown paths to home */}
           <Route path="*" element={<Navigate to="/" replace /> } />
         </Routes>
