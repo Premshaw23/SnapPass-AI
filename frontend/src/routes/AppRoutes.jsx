@@ -11,13 +11,13 @@ const AdminDashboard = lazy(() => import('../pages/AdminDashboard'));
 const TermsPage = lazy(() => import('../pages/TermsPage'));
 const PrivacyPage = lazy(() => import('../pages/PrivacyPage'));
 const PhotoStudio = lazy(() => import('../pages/PhotoStudio'));
-
+const HistoryPage = lazy(() => import('../pages/HistoryPage'));
 
 /**
  * AppRoutes — central route configuration for SnapPass AI.
  * Add new pages here so contributors can find all routes in one place.
  */
-function AppRoutes({darkMode, toggleTheme}) {
+function AppRoutes({ darkMode, toggleTheme }) {
   const location = useLocation();
 
   return (
@@ -33,7 +33,7 @@ function AppRoutes({darkMode, toggleTheme}) {
           <Route path="/privacy" element={<PrivacyPage darkMode={darkMode} toggleTheme={toggleTheme}/>} />
           <Route path="/studio" element={<PhotoStudio darkMode={darkMode} toggleTheme={toggleTheme}/>} />
           {/* Fallback — redirect unknown paths to home */}
-          <Route path="*" element={<Navigate to="/" replace /> } />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </RouteErrorBoundary>
