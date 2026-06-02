@@ -4,7 +4,7 @@
     gap: var(--space-xl, 1.5rem);
     max-width: 900px;
     width: 100%;
-    margin: 0 auto;
+    margin-top: calc(var(--navbar-height, 64px));
     padding: var(--space-lg, 1.5rem);
     box-sizing: border-box;
 }
@@ -89,7 +89,8 @@
 }
 
 [data-theme='dark'] .privacy-text h2,
-[data-theme='dark'] .privacy-text strong {
+[data-theme='dark'] .privacy-text strong,
+[data-theme='dark'] .section-title {
     color: #f8fafc;
 }
 
